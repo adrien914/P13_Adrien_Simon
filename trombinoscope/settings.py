@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -77,16 +78,16 @@ WSGI_APPLICATION = 'trombinoscope.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 try:
-    if os.environ["GESTION_DDSSP_ENV"] == "docker":
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'NAME': 'myDb',
-                'USER': 'user',
-                'PASSWORD': 'test',
-                'HOST': "db_trombi"
-            }
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'P13',
+            'USER': 'debian',
+            'PASSWORD': os.getenv('MYSQL_PASSWORD'),
+            'HOST': '51.68.121.152',
+            'PORT': 3306,
         }
+    }
 except KeyError:
     DATABASES = {
         'default': {

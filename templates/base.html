@@ -1,0 +1,65 @@
+{% load static %}
+
+<head>
+    <title>Trombinoscope - {% block title %}{% endblock %}</title>
+<script
+  src="https://code.jquery.com/jquery-3.5.1.js"
+  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/js/all.min.js" integrity="sha512-UwcC/iaz5ziHX7V6LjSKaXgCuRRqbTp1QHpbOJ4l1nw2/boCfZ2KlFIqBUA/uRVF0onbREnY9do8rM/uT/ilqw==" crossorigin="anonymous"></script>
+    <script src="{% static 'connection.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" integrity="sha512-vKMx8UnXk60zUwyUnUPM3HbQo8QfmNx7+ltw8Pm5zLusl1XIfwcxo8DbWCqMGKaWeNxWA8yrx5v3SaVpMvR3CA==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100&display=swap" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+
+<body class="bg-light">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+              <ul class="navbar-nav left-0 text-center">
+                <li class="nav-item">
+                    <h3 class="main-text">Trombinoscope</h3>
+                </li>
+              </ul>
+            <ul class="navbar-nav ml-auto text-center">
+            {% if request.user.is_superuser %}
+                <a href="{% url 'organigramme:admin' %}" class="btn btn-warning mr-2">Admin</a>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <a href='/logout' class="btn btn-danger mr-2">Se déconnecter</a>
+            {% else %}
+                <a href="#" data-target="#login" data-toggle="modal" class="nohover" style="width: 100px; height: 40px; cursor: default"></a>
+            {% endif %}
+            {% block navbar %}
+            {% endblock %}
+            </ul>
+        </nav>
+        <!-- class="border border-dark" -->
+        <div>
+          {% block body %}{% endblock %}
+        </div>
+    </div>
+
+<div id="login" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    
+    <div class="modal-content">
+      <div class="modal-body">
+        <button data-dismiss="modal" class="close">&times;</button>
+        <h4>Login</h4>
+        <input type="text" id="username" class="username form-control" placeholder="Username"/>
+        <input type="password" id="password" class="password form-control" placeholder="password"/>
+        <button class="btn login" onclick="login('{{ csrf_token }}')">Login</button>
+      </div>
+    </div>
+  </div>  
+</div>
+</body>

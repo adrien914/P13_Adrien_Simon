@@ -1,0 +1,375 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <title>Organigramme</title>
+    <link rel="stylesheet" href="{% static 'organigramme.css' %}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretty-checkbox/3.0.3/pretty-checkbox.min.css" integrity="sha512-kz4Ae66pquz4nVE5ytJyKfPDkQyHSggaDtT1v8oLfOd8bB+ZgZXNLaxex99MNu4fdCsWmi58mhLtfGk5RgfcOw==" crossorigin="anonymous" />
+{% endblock %}
+
+{% block title %}
+    Admin
+{% endblock %}
+
+{% block navbar %}
+    <a href="/" class="btn btn-info">Accueil</a>
+{% endblock %}
+
+{% block body %}
+        <div class="text-center jumbotron" style="background: white">
+            <div class="bg-light">
+                <h1 class="text-white mb-0">{{ pole.nom }}</h1>
+                <section id="search_input_section" class="row text-center">
+                    <form autocomplete="off" id="search_form" class="row ml-auto mr-auto" action="">
+                      <div class="autocomplete">
+                        <input id="search" class="col-12 text-center form-control bg-white border-dark"
+                               type="text" name="DirectionSearch"
+                               placeholder="{% if fiche %}{{ fiche.id }}: {{ fiche.nom }}{% else %}Choisissez une fiche{% endif %}">
+                      </div>
+                    {% if fiche %}
+                        <div class="position-relative">
+                    <button href="#" class="btn btn-danger delete_button" onclick="remove_fiche('{{ fiche.id }}', '{{ csrf_token }}')">
+                        <i class="far fa-trash-alt"></i>
+                    </button>
+                        </div>
+                    {% endif %}
+                    </form>
+                </section>
+                <section id="fiche-section" class="row text-center">
+                    <div class="col-3 ml-auto mr-auto">
+                      <div class="tooltip-custom">
+                      <img class="fiche-image ml-auto mr-auto" id="image-img" src="/media/{% if fiche.image %}{{ fiche.image }}
+                      {% else %}/photos/anonyme.jpeg{% endif %}"
+                      value="{% if fiche.image %}{{ fiche.image }}{% else %}/media/photos/anonyme.jpeg{% endif %}"
+                      data-target="#image_modal" data-toggle="modal">
+                            <span class="tooltiptext">Cliquez pour modifier l'image</span>
+                          </div>
+                        <input type="text" id="image" hidden value="{% if fiche.image %}{{ fiche.image }}{% else %}/photos/anonyme.jpeg{% endif %}">
+                    </div>
+                    <div class="col-12 mt-2">
+                        <div class="pretty p-switch p-fill">
+                            <input id="etat" type="checkbox" {% if fiche.etat == "pub" %}checked{% endif %}/>
+                            <div class="state">
+                                <label>Publié</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-2 ">
+                        <label for="nom" class="col-form-label col-6 mr-auto ml-auto">Nom</label>
+                        <div class="tooltip-custom">
+                        <input id="nom" type="text" class="form-control col-8 text-center mr-auto ml-auto"
+                               value="{% if fiche.nom %}{{ fiche.nom }}{% endif %}">
+                               <span class="tooltiptext">Le nom affiché sur la fiche</span>
+                               </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label for="email" class="col-form-label col-6 mr-auto ml-auto">Email</label>
+                        <div class="tooltip-custom">
+                          <input id="email" type="text" class="form-control col-8 text-center mr-auto ml-auto"
+                          value="{% if fiche.email %}{{ fiche.email }}{% endif %}">
+                          <span class="tooltiptext">L'e-mail affiché sur la fiche</span>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label for="telephone" class="col-form-label col-6 mr-auto ml-auto">Telephone</label>
+                        <div class="tooltip-custom">
+                          <input id="telephone" type="text" class="form-control col-8 text-center mr-auto ml-auto"
+                          value="{% if fiche.telephone %}{{ fiche.telephone }}{% endif %}">
+                          <span class="tooltiptext">Le numéro de téléphone affiché sur la fiche</span>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label for="fax" class="col-form-label col-6 mr-auto ml-auto">Fax</label>
+                        <input id="fax" type="text" class="form-control col-8 text-center mr-auto ml-auto"
+                               value="{% if fiche.fax %}{{ fiche.fax }}{% endif %}">
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label for="rang_affichage" class="col-form-label col-6 mr-auto ml-auto">Rang d'affichage</label>
+                        <div class="tooltip-custom">
+                          <input id="rang_affichage" type="number" class="form-control col-8 text-center mr-auto ml-auto"
+                          value={% if fiche.rang_affichage %}{{ fiche.rang_affichage }}{% else %}0{% endif %}>
+                          <span class="tooltiptext">Le rang de la fiche dans son groupe ( de gauche a droite dans l'ordre croissant )</span>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label for="nombre_elements_ligne" class="col-form-label col-6 mr-auto ml-auto">Nombre d'éléments par ligne</label>
+                        <div class="tooltip-custom">
+                          <select id="nombre_elements_ligne" class="form-control col-8 text-center mr-auto ml-auto">
+                            <option value="col-12" {% if fiche.nombre_elements_ligne == "col-12" %}selected{% endif %}>1</option>
+                            <option value="col-6" {% if fiche.nombre_elements_ligne == "col-6" %}selected{% endif %}>2</option>
+                            <option value="col-4" {% if fiche.nombre_elements_ligne == "col-4" %}selected{% endif %}>3</option>
+                          </select>
+                          <span class="tooltiptext">Le nombre d'éléments possibles sur la ligne de la fiche</span>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label for="pole" class="col-form-label col-6 mr-auto ml-auto">Pôle</label>
+                        <div class="tooltip-custom">
+                          <input type="button" id="pole" class="form-control btn btn-outline-secondary col-8 text-center mr-auto ml-auto"
+                          value="{% if fiche.pole %}{{ fiche.pole }}{% else %}Cliquez pour choisir un pôle{% endif %}"
+                          data-target="#pole_modal" data-toggle="modal">
+                          <span class="tooltiptext">Le pôle auquel appartient la fiche ( ex: sicop )</span>
+                        <button type="reset" onclick="reset('pole')" class="btn btn-danger reset-button"><i class="far fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label for="fonction" class="col-form-label col-6 mr-auto ml-auto">Fonction</label>
+                        <div class="tooltip-custom">
+                          <input type="button" id="fonction" class="form-control btn btn-outline-secondary col-8 text-center mr-auto ml-auto"
+                          value="{% if fiche.fonction %}{{ fiche.fonction.nom }}{% else %}Cliquez pour choisir une Fonction{% endif %}"
+                          data-target="#fonction_modal" data-toggle="modal">
+                          <span class="tooltiptext">Le fonction affichée sur la fiche</span>
+                          <button type="reset" onclick="reset('fonction')" class="btn btn-danger reset-button"><i class="far fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label for="groupe" class="col-form-label col-6 mr-auto ml-auto">Groupe</label>
+                        <div class="tooltip-custom">
+                          <input type="button" id="groupe" class="form-control btn btn-outline-secondary col-8 text-center mr-auto ml-auto"
+                          value="{% if fiche.groupe %}{{ fiche.groupe.nom }}{% else %}Cliquez pour choisir un groupe{% endif %}"
+                          data-target="#groupe_modal" data-toggle="modal">
+                          <span class="tooltiptext">Le groupe auquel appartient la fiche ( ex: secrétariat dans sicop )</span>
+                        <button type="reset" onclick="reset('groupe')" class="btn btn-danger reset-button"><i class="far fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label for="grade" class="col-form-label col-6 mr-auto ml-auto">Grade</label>
+                        <div class="tooltip-custom">
+                          <input type="button" id="grade" class="form-control btn btn-outline-secondary col-8 text-center mr-auto ml-auto"
+                          value="{% if fiche.grade %}{{ fiche.grade }}{% else %}Cliquez pour choisir un grade{% endif %}"
+                          data-target="#grade_modal" data-toggle="modal">
+                          <span class="tooltiptext">Le grade affiché sur la fiche</span>
+                        <button type="reset" onclick="reset('grade')" class="btn btn-danger reset-button"><i class="far fa-trash-alt"></i></button>
+                        </div>  
+                        </div>
+                    <div class="col-12 mt-2">
+                        <button class="form-control btn btn-success col-3 text-center mr-auto ml-auto"
+                                onclick="save({% if fiche %}{{ fiche.id }}{% else %}''{% endif %} ,
+                                        '{{ csrf_token }}')">
+                            Sauvegarder
+                        </button>
+                    </div>
+                </section>
+            </div>
+        <!-- Modal correspondant aux images -->
+            <div class="modal fade" id="image_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Choisissez une image</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <table id="image-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Nom</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for image in images %}
+                            <tr>
+                                    <td><a class="table-link" onclick="change_image(`/photos/{{ image }}`)">
+                                        <img class="table-img" src="/media/photos/{{ image }}"></a></td>
+                                    <td><a class="table-link" onclick="change_image(`/photos/{{ image }}`)">{{ image }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <script>
+                        $(document).ready( function () {
+                            $('#image-table').DataTable();
+                        } );
+                    </script>
+                  </div>
+                  <div class="modal-footer">
+                      <form id="upload-file" method="post" enctype="multipart/form-data">
+                          <fieldset>
+                            <label for="file">Poster une nouvelle image</label>
+                            <input type="file" id="image_input" name="file" placeholder="">
+                          </fieldset>
+                      </form>
+                    <button id="ajouter_image_button" type="button" class="btn btn-primary" onclick="add_image('{{ csrf_token }}')">Ajouter</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <!-- Modal correspondant aux poles -->
+            <div class="modal fade" id="pole_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Choisissez un pôle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <table id="pole-table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Nom</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pole in poles %}
+                            <tr>
+                                    <td><a class="table-link" onclick="change_pole(`{{ pole.nom }}`)">{{ pole.id }}</a></td>
+                                    <td><a class="table-link" onclick="change_pole(`{{ pole.nom }}`)">{{ pole.nom }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <script>
+                        $(document).ready( function () {
+                            $('#pole-table').DataTable();
+                        } );
+                    </script>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <!-- Modal correspondant aux fonctions -->
+            <div class="modal fade" id="fonction_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Choisissez une fonction</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <table id="fonction-table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Nom</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fonction in fonctions %}
+                            <tr>
+                                    <td><a class="table-link" onclick="change_fonction(`{{ fonction.nom }}`)">{{ fonction.id }}</a></td>
+                                    <td><a class="table-link" onclick="change_fonction(`{{ fonction.nom }}`)">{{ fonction.nom }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <script>
+                        $(document).ready( function () {
+                            $('#fonction-table').DataTable();
+                        } );
+                    </script>
+                  </div>
+                  <div class="modal-footer">
+                    <input id="ajouter_fonction_input" type="text" placeholder="Nom de la nouvelle fonction">
+                    <button id="ajouter_fonction_button" type="button" class="btn btn-primary" onclick="add_fonction('{{ csrf_token }}')">Creer</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <!-- Modal correspondant aux groupes -->
+            <div class="modal fade" id="groupe_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Choisissez un groupe</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <table id="groupe-table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Nom</th>
+                                <th>Importance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for groupe in groupes %}
+                            <tr>
+                                    <td><a class="table-link" onclick="change_groupe(`{{ groupe.nom }}`)">{{ groupe.id }}</a></td>
+                                    <td><a class="table-link" onclick="change_groupe(`{{ groupe.nom }}`)">{{ groupe.nom }}</a></td>
+                                    <td><a class="table-link" onclick="change_groupe(`{{ groupe.nom }}`)">{{ groupe.importance }}</a></td>
+
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <script>
+                        $(document).ready( function () {
+                            $('#groupe-table').DataTable();
+                        } );
+                    </script>
+                  </div>
+                  <div class="modal-footer">
+                    <input id="ajouter_groupe_input" type="text" placeholder="Nom du nouveau groupe">
+                    <input id="ajouter_groupe_input_importance" type="number" placeholder="Importance du nouveau groupe">
+                    <button id="ajouter_groupe_button" type="button" class="btn btn-primary" onclick="add_groupe('{{ csrf_token }}')">Creer</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <!-- Modal correspondant aux grades -->
+            <div class="modal fade" id="grade_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Choisissez un grade</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <table id="grade-table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Nom</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for grade in grades %}
+                            <tr>
+                                    <td><a class="table-link" onclick="change_grade(`{{ grade.nom }}`)">{{ grade.id }}</a></td>
+                                    <td><a class="table-link" onclick="change_grade(`{{ grade.nom }}`)">{{ grade.nom }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <script>
+                        $(document).ready( function () {
+                            $('#grade-table').DataTable();
+                        } );
+                    </script>
+                  </div>
+                  <div class="modal-footer">
+                    <input id="ajouter_grade_input" type="text" placeholder="Nom du nouveau grade">
+                    <button id="ajouter_grade_button" type="button" class="btn btn-primary" onclick="add_grade('{{ csrf_token }}')">Creer</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <script src="{% static 'autocomplete.js' %}"></script>
+        <script src="{% static 'admin.js' %}"></script>
+        <script>
+            set_listener('{{ csrf_token }}')
+        </script>
+{% endblock %}

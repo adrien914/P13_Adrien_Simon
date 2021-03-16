@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Accueil
+{% endblock %}
+{% block body %}
+        <div class="text-center" style="background: lightgray">
+            <div class="row position-relative">
+                <img class="col-6" src="{% static 'img/flag.jpg' %}">
+                <div class="col-6 mt-auto mb-auto">
+                    {% for group in groups %}
+                    <ul class="text-left mb-3 col-12 list-unstyled border-left border-dark">
+                        {% for pole in group %}
+                            <li><a class="text-decoration-none text-dark" href="/organigramme/{{ pole }}/" >{{ pole }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+{% endblock %}

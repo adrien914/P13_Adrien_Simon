@@ -3,3 +3,4 @@ venv
 .env
 prod
 media/photos
+.idea

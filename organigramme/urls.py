@@ -3,7 +3,6 @@ from django.contrib import admin
 from organigramme import views
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib.auth.views import LogoutView
 
 app_name = "organigramme"
 
@@ -21,6 +20,5 @@ urlpatterns = [
     path('add_image/', views.add_image, name='add_image'),
     path('change_rank/', views.ChangeRank.as_view(), name='change_rank'),
     path('page_admin/<str:_id>/', views.Admin.as_view(), name='admin_param'),
-    path('admin/', admin.site.urls),
-    path("logout/", LogoutView.as_view(), name="logout"),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

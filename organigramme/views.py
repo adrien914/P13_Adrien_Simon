@@ -49,10 +49,12 @@ class Admin(View):
     @staticmethod
     def get(request, _id=None):
         if request.user.is_superuser:
-            if _id:  # if there is an id in the url it means we're on a Fiche
+            context = {}
+            # if there is an id in the url try to find the fiche
+            try:
                 context = {"fiche": Fiche.objects.get(id=_id)}
-            else:  # else we get all the fiches to show them in a table
-                context = {"fiches": Fiche.objects.all()}
+            except:  # if we can't find the fiche redirect to the url without an id
+                return redirect('organigramme:admin')
             # Get all the poles
             context["poles"] = Pole.objects.all()
             context["fonctions"] = Fonction.objects.all()

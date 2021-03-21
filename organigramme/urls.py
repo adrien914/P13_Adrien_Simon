@@ -12,6 +12,7 @@ urlpatterns = [
     path("organigramme/<str:pole>/", views.Organigramme.as_view(), name="organigramme"),
     path('search_engine/', views.SearchEngine.as_view(), name='search_engine'),
     path('page_admin/', views.Admin.as_view(), name='admin'),
+    path('page_admin/<str:_id>/', views.Admin.as_view(), name='admin_param'),
     path('modify_fiche/', views.ModifyFiche.as_view(), name='modify_fiche'),
     path('remove_fiche/', views.RemoveFiche.as_view(), name='remove_fiche'),
     path('add_fonction/', views.AddFonction.as_view(), name='add_fonction'),
@@ -19,6 +20,5 @@ urlpatterns = [
     path('add_groupe/', views.AddGroupe.as_view(), name='add_groupe'),
     path('add_image/', views.add_image, name='add_image'),
     path('change_rank/', views.ChangeRank.as_view(), name='change_rank'),
-    path('page_admin/<str:_id>/', views.Admin.as_view(), name='admin_param'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

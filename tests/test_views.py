@@ -110,3 +110,15 @@ class TestModifyFiche(TestCase):
         response = self.client.post(reverse("organigramme:modify_fiche"), data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(Fiche.objects.all()), 2)
+
+
+class TestRemoveFiche(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.fiche = Fiche.objects.create(id=1, nom="fiche", rang_affichage=1)
+
+    def test_remove_fiche(self):
+        response = self.client.post(reverse("organigramme:remove_fiche"), {"fiche_id": 1})
+        Fiche.objects.get(id=1)
+        # self.assertRaises()

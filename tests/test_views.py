@@ -162,7 +162,7 @@ class TestAddGroupe(TestCase):
     def test_add_groupe(self):
         with self.assertRaises(Exception):
             Fonction.objects.get(nom="test")
-        response = self.client.post(reverse("organigramme:add_groupe"), {"nom": "test", "importance": 1})
+        response = self.client.post(reverse("organigramme:add_groupe"), {"nom": "test", "importance": "1"})
         try:
             Fonction.objects.get(nom="test")
         except:

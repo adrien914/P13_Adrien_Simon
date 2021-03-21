@@ -84,7 +84,7 @@ class SearchEngine(View):
     @staticmethod
     def post(request):
         """
-        Matches directions based on the text sent in the request
+        Matches fiches based on the text sent in the request
         """
         context = {"propositions": []}
         text = request.POST.get("text", "")

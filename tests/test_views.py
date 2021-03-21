@@ -162,8 +162,19 @@ class TestAddGroupe(TestCase):
     def test_add_groupe(self):
         with self.assertRaises(Exception):
             Fonction.objects.get(nom="test")
-        response = self.client.post(reverse("organigramme:add_groupe"), {"nom": "test", "importance": "1"})
+        response = self.client.post(reverse("organigramme:add_groupe"), {"nom": "test", "importance": 1})
         try:
             Groupe.objects.get(nom="test")
         except:
             self.fail()
+
+
+class TestChangeRank(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.fiche = Fiche.objects.create(id=1, nom="fiche", rang_affichage=1)
+
+    def test_change_rank(self):
+        self.client.post(reverse("organigramme:change_rank"), {"id": 1, "rank": 2})
+        self.assertEqual(Fiche.objects.get(id=1).rang_affichage, 2)

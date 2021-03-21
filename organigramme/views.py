@@ -102,7 +102,7 @@ class ModifyFiche(View):
                 pole = Pole.objects.get(nom__iexact=data["pole"].rstrip())
                 data["pole"] = pole
             except:
-                data["pole"]
+                data["pole"] = None
             try:
                 grade = Grade.objects.get(nom__iexact=data["grade"].rstrip())
                 data["grade"] = grade

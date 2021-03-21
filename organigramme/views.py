@@ -133,7 +133,6 @@ class ModifyFiche(View):
             response.status_code = 200
             return response
         except Exception as e:
-            print(traceback.format_exc())
             response = JsonResponse({"message": "Error"})
             response.status_code = 500
             return response

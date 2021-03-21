@@ -1,7 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.contrib import auth
-from organigramme.models import Pole, Fiche
+from organigramme.models import Pole, Fiche, Groupe, Fonction, Grade
 from django.contrib.auth.models import User
 
 
@@ -70,3 +69,30 @@ class TestSearchEngine(TestCase):
     def test_search_engine(self):
         response = self.client.post(reverse("organigramme:search_engine"), {"text": "test"})
         self.assertEqual(response.status_code, 200)
+
+
+class TestModifyFiche(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.fiche = Fiche.objects.create(id=1, nom="fiche", rang_affichage=1)
+        self.pole = Pole.objects.create(id=1, nom="pole", group=1, classement=1)
+        self.groupe = Groupe.objects.create(id=1, nom="groupe", importance=1)
+        self.fonction = Fonction.objects.create(id=1, nom="fonction")
+        self.grade = Grade.objects.create(id=1, nom="grade")
+
+    def test_ModifyFiche_exists(self):
+        data = {
+            "id": 1,
+            "nom": "modified fiche",
+            "email": "email",
+            "pole": "pole",
+            "groupe": "groupe",
+            "fonction": "fonction",
+            "grade": "grade",
+            "rang_affichage": 1,
+        }
+        response = self.client.post(reverse("organigramme:modify_fiche"), data)
+        self.assertEqual(response.status_code, 200)
+        for key in data:
+            self.assertTrue(data[key] == self.fiche[key])

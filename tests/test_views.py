@@ -104,11 +104,6 @@ class TestModifyFiche(TestCase):
     def test_ModifyFiche_not_exists(self):
         data = {
             "nom": "created fiche",
-            "email": "email",
-            "pole": "pole",
-            "groupe": "groupe",
-            "fonction": "fonction",
-            "grade": "grade",
             "rang_affichage": 2,
         }
         response = self.client.post(reverse("organigramme:modify_fiche"), data)

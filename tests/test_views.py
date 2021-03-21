@@ -103,6 +103,7 @@ class TestModifyFiche(TestCase):
 
     def test_ModifyFiche_not_exists(self):
         data = {
+            "id": "",
             "nom": "created fiche",
             "rang_affichage": 2,
         }

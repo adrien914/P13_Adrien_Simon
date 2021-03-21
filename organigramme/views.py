@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from organigramme.models import Pole, Fiche, Grade, Fonction, Groupe
 from django.views.decorators.csrf import csrf_exempt
@@ -29,17 +29,18 @@ class Organigramme(View):
 
     @staticmethod
     def get(request, pole):
-        pole = Pole.objects.get(nom=pole)
+        try:
+            pole = Pole.objects.get(nom=pole)
+        except:
+            return redirect(ListePoles)
         fiches = Fiche.objects.filter(pole=pole).order_by("rang_affichage")
-        groupes = set()
-        for fiche in fiches:
+        groupes = set()  # we use a set at first because we want each group to be there only once
+        for fiche in fiches:  # add only groups with published fiches to the list
             if fiche.groupe and fiche.etat == "pub":
                 groupes.add(fiche.groupe)
         groupes = list(groupes)
-        groupes.sort(key=lambda groupe: groupe.importance)
-        print(groupes)
+        groupes.sort(key=lambda groupe: groupe.importance)  # sort the groups by importance
         context = {"pole": pole, "fiches": fiches, "groupes": groupes}
-        print(context)
         return render(request, "organigramme.html", context=context)
 
 
@@ -109,7 +110,6 @@ class ModifyFiche(View):
             except:
                 data["grade"] = None
             try:
-                print(data["fonction"])
                 fonction = Fonction.objects.get(nom__iexact=data["fonction"].rstrip())
                 data["fonction"] = fonction
             except:

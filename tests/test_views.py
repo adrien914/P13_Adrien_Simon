@@ -122,3 +122,48 @@ class TestRemoveFiche(TestCase):
         response = self.client.post(reverse("organigramme:remove_fiche"), {"fiche_id": 1})
         with self.assertRaises(Exception):
             Fiche.objects.get(id=1)
+
+
+class TestAddFonction(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+
+    def test_add_fonction(self):
+        with self.assertRaises(Exception):
+            Fonction.objects.get(nom="test")
+        response = self.client.post(reverse("organigramme:add_fonction"), {"nom": "test"})
+        try:
+            Fonction.objects.get(nom="test")
+        except:
+            self.fail()
+
+
+class TestAddGrade(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+
+    def test_add_grade(self):
+        with self.assertRaises(Exception):
+            Grade.objects.get(nom="test")
+        response = self.client.post(reverse("organigramme:add_grade"), {"nom": "test"})
+        try:
+            Grade.objects.get(nom="test")
+        except:
+            self.fail()
+
+
+class TestAddGroupe(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+
+    def test_add_groupe(self):
+        with self.assertRaises(Exception):
+            Fonction.objects.get(nom="test")
+        response = self.client.post(reverse("organigramme:add_groupe"), {"nom": "test", "importance": 1})
+        try:
+            Fonction.objects.get(nom="test")
+        except:
+            self.fail()

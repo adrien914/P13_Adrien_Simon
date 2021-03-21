@@ -163,7 +163,10 @@ class AddFonction(View):
     def post(request):
         try:
             data = request.POST.dict()
-            data.pop("csrfmiddlewaretoken")
+            try:
+                data.pop("csrfmiddlewaretoken")
+            except:
+                pass
             Fonction.objects.create(**data)
             response = JsonResponse({"message": "Success"})
             response.status_code = 200
@@ -181,7 +184,10 @@ class AddGrade(View):
     def post(request):
         try:
             data = request.POST.dict()
-            data.pop("csrfmiddlewaretoken")
+            try:
+                data.pop("csrfmiddlewaretoken")
+            except:
+                pass
             Grade.objects.create(**data)
             response = JsonResponse({"message": "Success"})
             response.status_code = 200
@@ -198,7 +204,10 @@ class AddGroupe(View):
     def post(request):
         try:
             data = request.POST.dict()
-            data.pop("csrfmiddlewaretoken")
+            try:
+                data.pop("csrfmiddlewaretoken")
+            except:
+                pass
             Groupe.objects.create(**data)
             response = JsonResponse({"message": "Success"})
             response.status_code = 200

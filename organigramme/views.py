@@ -32,7 +32,7 @@ class Organigramme(View):
         try:
             pole = Pole.objects.get(nom=pole)
         except:
-            return redirect(ListePoles)
+            return redirect("organigramme:liste_poles")
         fiches = Fiche.objects.filter(pole=pole).order_by("rang_affichage")
         groupes = set()  # we use a set at first because we want each group to be there only once
         for fiche in fiches:  # add only groups with published fiches to the list

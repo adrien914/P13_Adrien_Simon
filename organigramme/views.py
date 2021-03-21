@@ -99,7 +99,10 @@ class ModifyFiche(View):
     def post(request):
         try:
             data = request.POST.dict()
-            data.pop("csrfmiddlewaretoken")
+            try:
+                data.pop("csrfmiddlewaretoken")
+            except:
+                pass
             try:
                 fiche = Fiche.objects.filter(id=int(data["id"]))
             except:

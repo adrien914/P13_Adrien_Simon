@@ -37,7 +37,7 @@ class TestAdmin(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create(username="test", password="test", is_superuser=True)
+        self.user = User.objects.create_user(username="test", password="test", is_superuser=True)
         self.fiche = Fiche.objects.create(id=1, nom="test", rang_affichage=1)
 
     def test_page_admin_redirect_not_connected_users(self):
@@ -47,7 +47,7 @@ class TestAdmin(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_page_admin_connected_no_id_specified(self):
-        self.client.login(username="test", password="test")
+        self.client.login(username="test", password="test") 
         response = self.client.get(reverse("organigramme:admin"))
         self.assertEqual(response.status_code, 200)
 

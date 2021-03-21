@@ -49,9 +49,9 @@ class Admin(View):
     @staticmethod
     def get(request, _id=None):
         if request.user.is_superuser:
-            if _id: # if there is an id in the url it means we're on a Fiche
+            if _id:  # if there is an id in the url it means we're on a Fiche
                 context = {"fiche": Fiche.objects.get(id=_id)}
-            else: # else we get all the fiches to show them in a table
+            else:  # else we get all the fiches to show them in a table
                 context = {"fiches": Fiche.objects.all()}
             # Get all the poles
             context["poles"] = Pole.objects.all()
@@ -72,6 +72,8 @@ class Admin(View):
                     images.append(image)
             context["images"] = images
             return render(request, "admin.html", context)
+        else:
+            return redirect('organigramme:liste_poles')
 
 
 class SearchEngine(View):

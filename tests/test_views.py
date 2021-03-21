@@ -164,6 +164,6 @@ class TestAddGroupe(TestCase):
             Fonction.objects.get(nom="test")
         response = self.client.post(reverse("organigramme:add_groupe"), {"nom": "test", "importance": "1"})
         try:
-            Fonction.objects.get(nom="test")
+            Groupe.objects.get(nom="test")
         except:
             self.fail()

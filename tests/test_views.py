@@ -94,5 +94,10 @@ class TestModifyFiche(TestCase):
         }
         response = self.client.post(reverse("organigramme:modify_fiche"), data)
         self.assertEqual(response.status_code, 200)
+        fiche_dict = vars(Fiche.objects.get(id=1))
+        data = {"id": 1, "nom": "modified fiche", "email": "email", "rang_affichage": 1,}
+        for key in ["pole_id", "groupe_id", "fonction_id", "grade_id"]:
+            data[key] = 1
         for key in data:
-            self.assertTrue(data[key] == self.fiche[key])
+            self.assertEqual(data[key], fiche_dict[key])
+

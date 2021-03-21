@@ -38,7 +38,7 @@ class TestAdmin(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create(username="test", password="test", is_superuser=True)
-        self.fiche = Fiche.objects.create(id=1, nom="test")
+        self.fiche = Fiche.objects.create(id=1, nom="test", rang_affichage=1)
 
     def test_page_admin_redirect_not_connected_users(self):
         self.client.login()
@@ -65,7 +65,7 @@ class TestSearchEngine(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.fiche = Fiche.objects.create(id=1, nom="test")
+        self.fiche = Fiche.objects.create(id=1, nom="test", rang_affichage=1)
 
     def test_search_engine(self):
         response = self.client.post(reverse("organigramme:search_engine"), {"text": "test"})

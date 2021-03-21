@@ -101,3 +101,16 @@ class TestModifyFiche(TestCase):
         for key in data:
             self.assertEqual(data[key], fiche_dict[key])
 
+    def test_ModifyFiche_not_exists(self):
+        data = {
+            "nom": "created fiche",
+            "email": "email",
+            "pole": "pole",
+            "groupe": "groupe",
+            "fonction": "fonction",
+            "grade": "grade",
+            "rang_affichage": 2,
+        }
+        response = self.client.post(reverse("organigramme:modify_fiche"), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(Fiche.objects.all()), 2)

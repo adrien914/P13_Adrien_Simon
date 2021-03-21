@@ -120,5 +120,4 @@ class TestRemoveFiche(TestCase):
 
     def test_remove_fiche(self):
         response = self.client.post(reverse("organigramme:remove_fiche"), {"fiche_id": 1})
-        Fiche.objects.get(id=1)
-        # self.assertRaises()
+        self.assertRaises(Exception, Fiche.objects.get(id=1))
